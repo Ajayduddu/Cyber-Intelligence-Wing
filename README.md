@@ -1,6 +1,6 @@
 # Cyber-Intelligence Wing: AI-Driven MITRE ATT&CK Mapping
 
-## **🚀 Live Dashboard**
+## ** Live Dashboard**
 The live forensic dashboard is accessible at:  
 **[http://20.48.224.119:5000](http://20.48.224.119:5000)**  
 
