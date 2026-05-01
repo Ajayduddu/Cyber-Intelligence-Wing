@@ -50,4 +50,4 @@ This repository contains the full research and development pipeline:
 
 ### **Author**
 **Ajay Kumar Duddu**  
-*Master's in Data Science | Cybersecurity & Digital Forensics Researcher*
+
