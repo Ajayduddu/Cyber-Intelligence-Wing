@@ -1,69 +1,59 @@
-# Cyber-Intelligence Wing: AI-Driven MITRE ATT&CK Mapping
+# 🛡️ Cyber-Intelligence Wing (RTAR Framework)
+**Real-Time Autonomous Response & AI-Driven MITRE ATT&CK Mapping**
 
-## ** Live Dashboard**
-The live forensic dashboard is accessible at:  
-**[http://20.48.224.119:5000](http://20.48.224.119:5000)**  
+[![Azure Deployment](https://img.shields.io/badge/Deployed-Microsoft%20Azure-0078D4?logo=microsoftazure&style=for-the-badge)](http://20.48.224.119:5000) 
+[![Python Version](https://img.shields.io/badge/Python-3.9+-3776AB?logo=python&logoColor=white&style=for-the-badge)](https://www.python.org/) 
+[![PyTorch](https://img.shields.io/badge/PyTorch-SciBERT%20%7C%20BiLSTM-EE4C2C?logo=pytorch&logoColor=white&style=for-the-badge)](https://pytorch.org/) 
 
----
+The **Cyber-Intelligence Wing** is an advanced cybersecurity infrastructure designed to bridge the gap between threat detection and automated network-level enforcement. Hosted on a Microsoft Azure VM, the system utilizes a custom **SciBERT-BiLSTM** neural network to automatically analyze incoming raw payloads, contextually map them to the MITRE ATT&CK framework across 15 distinct classes, and autonomously deploy **Suricata** defense signatures without human intervention.
 
-## **Project Overview**
-The **Cyber-Intelligence Wing** is an advanced cybersecurity infrastructure designed to bridge the gap between raw honeypot data and actionable threat intelligence. Hosted on an **Azure VM**, the system utilizes a custom **SciBERT-BiLSTM** neural network to automatically categorize incoming threats into the **MITRE ATT&CK** framework with high precision.
-
-## **Key Features**
-*   **AI-Powered Mapping**: Leverages a SciBERT-BiLSTM model to analyze the semantics of raw logs (e.g., Log4Shell, SSH Brute Force) and map them to specific MITRE techniques.
-*   **Azure-Native Deployment**: Fully deployed on an Azure VM to ensure public accessibility and professional reliability.
-*   **Dual-Source Architecture**: Features a high-speed inference engine capable of handling **10 million alerts** collected via **T-Pot**.
-*   **Forensic Verification**: Integrated logic to cross-reference identified exploits with live web intelligence for validated threat analysis.
-
-## **Repository Structure & Logic**
-This repository contains the full research, development, and production pipeline:
-*   **`app.py`**: The Flask-based core that serves the dashboard on **Port 5000** and handles real-time API requests.
-*   **`model.py`**: Defines the custom **SciBERT-BiLSTM** neural network architecture.
-*   **`retrain_model.py`**: The production script used to update model weights with live T-Pot log context to prevent "model drift".
-*   **`training exploitation.py`**: The research-focused script used during the development phase to simulate and analyze specific exploit behaviors to refine the detection engine.
-*   **`mitre_scraper.py`**: A dynamic scraper ensuring the system stays updated with the latest TTPs from the official MITRE ATT&CK matrix.
-*   **`google_search.py`**: An automated verification script that pulls live security advisories to cross-validate model predictions.
-*   **`bilstm_model_full.pth`**: The serialized model weights (the "brain") generated from the training process.
-
-## **Technical Architecture**
-*   **Ingestion**: Raw logs are collected via a **T-Pot** honeypot node across multiple simulated vulnerable service ports.
-*   **Processing**: A Flask-backend processes incoming data through an ML pipeline involving **Python** and **Pandas**.
-*   **Visualization**: An interactive frontend displays the MITRE technique ID, description, and model confidence score.
-
-## **Networking & Security**
-*   **Web Access**: The dashboard is hosted on **Port 5000** and is accessible via the Azure VM public IP.
-*   **Secure Authentication**: Infrastructure and backend access are secured using **Fortinet** authentication tokens and security codes.
-*   **Data Source**: Ground-truth forensic data is stored in `labeled_tpot_data.csv`, derived from a 10M alert dataset.
-
-## **Tech Stack**
-*   **Languages**: Python (Data Science/Backend), SQL (Database), C, Lex.
-*   **Cloud & DevOps**: Azure Cloud, Git/GitHub, Fortinet.
-*   **Data Science**: Pandas, SciBERT-BiLSTM, PyTorch (for the `.pth` model weights).
-
-## **Installation & Deployment**
-1.  **Clone the repository**:
-    ```bash
-    git clone [https://github.com/Ajayduddu/Cyber-Intelligence-Wing.git](https://github.com/Ajayduddu/Cyber-Intelligence-Wing.git)
-    ```
-2.  **Set up the environment**:
-    
-```bash
-    source ~/ml_env/bin/activate
-    pip install -r requirements.txt
-    ```
-3.  **Launch the Application**:
-    
-```bash
-    python app.py
-    ```
-
-## **Roadmap & Future Work**
-*   **Sentinel API Integration**: Automating the generation of **Suricata rules** based on predicted threats.
-*   **Real-Time Autonomous Response (RTAR)**: Transitioning from passive forensic detection to active network mitigation.
-*   **Elasticsearch Integration**: Full live-streaming of the 10M alert backend into the inference engine.
+ **Live Forensic Dashboard:** [http://20.48.224.119:5000](http://20.48.224.119:5000)
 
 ---
 
-### **Author**
-**Ajay Kumar Duddu**  
-*Master's in Cybersecurity , NYIT.
+## Key Features
+
+* **Deep Learning Inference Engine:** Implements a `CyberThreatBiLSTM` model built with PyTorch, layering a Bidirectional LSTM over pre-trained SciBERT embeddings (`allenai/scibert_scivocab_uncased`) to mathematically evaluate payloads.
+* **Live MITRE STIX Integration:** Dynamically queries the official MITRE Enterprise GitHub repository in real-time to fetch accurate, up-to-date threat context.
+* **Autonomous Enforcement Validation:** Validates and outputs automated Suricata PCRE blocking rules (e.g., stopping SQL Injections and Log4Shell RCEs) ready for firewall deployment.
+* **Flask Web Intelligence API:** A backend running on port 5000 that processes payloads dynamically and integrates with an OSINT verification simulation.
+
+---
+
+## 📂 Repository Structure
+
+This repository strictly matches the finalized deployment directory files. 
+*(Note: Source code files are currently saved with `.txt` extensions for document review).*
+
+```text
+Cyber-Intelligence-Wing
+ ┣ 📜 app.py.txt                  # Core Flask backend; bridges ML, DB, and API
+ ┣ 📜 automated_rules.txt         # Output file where Suricata defense signatures are written
+ ┣ 📜 cyber_intel_20260501.log.txt# Traffic and system logs generated by the Flask WSGI server
+ ┣ 📜 demo.py.txt                 # Utility script to wipe database memory and clear firewall rules
+ ┣ 📜 Google Search.py.txt        # Simulates OSINT cross-referencing module for external intel
+ ┣ 📜 main.py.txt                 # Primary orchestrator script to verify DB and ML components
+ ┣ 📜 mitre_scraper.py.txt        # Connects live to MITRE's GitHub for real-time STIX definitions
+ ┣ 📜 model.py.txt                # PyTorch class definition for the CyberThreatBiLSTM architecture
+ ┗ 📜 retrain_model.py.txt        # Production pipeline script for model fine-tuning and weight updating
+
+
+
+Technical Architecture
+Ingestion & Orchestration (main.py.txt & app.py.txt): The raw payload is processed through the primary backend server.
+
+Intelligence (model.py.txt): The payload token is passed through the neural network. The engine calculates the logits, extracts the highest probability, maps it to a 15-class MITRE technique index, and assigns a dynamic severity score.
+
+Contextual Validation (mitre_scraper.py.txt & Google Search.py.txt): The predicted TID is cross-referenced with the live MITRE database, and the simulated OSINT module checks for external platform verification.
+
+Enforcement (automated_rules.txt): Mitigation logic generates the exact syntax needed (e.g., alert ip any any -> any any (msg:"RTAR Auto-Block...")) to isolate the threat.
+
+Tech Stack
+Cloud & Networking: Microsoft Azure VM, Ubuntu Linux, Suricata NIDPS
+
+Deep Learning & NLP: PyTorch, Transformers (HuggingFace), SciBERT
+
+Backend & Verification: Python 3.9+, Flask, SQLite3 (Memory State), Pandas
+
+ Author
+Ajay Kumar 
