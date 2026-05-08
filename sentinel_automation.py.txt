@@ -1,0 +1,26 @@
+import sqlite3
+import os
+import subprocess
+
+def deploy_mitigation():
+    conn = sqlite3.connect("/home/projectazure/cyber_intel.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, tid, attack_type, severity FROM threat_logs WHERE severity >= 7 AND processed = 0")
+    threats = cursor.fetchall()
+
+    if not threats: return
+
+    rules_file = "/etc/suricata/rules/automated.rules"
+    with open(rules_file, "a") as f:
+        for row in threats:
+            sid = 2000000 + row[0]
+            f.write(f'alert ip any any -> any any (msg:"RTAR Auto-Block: {row[2]} ({row[1]})"; sid:{sid}; rev:1;)\n')
+            cursor.execute("UPDATE threat_logs SET processed = 1 WHERE id = ?", (row[0],))
+            print(f"[+] Deployed SID {sid} for {row[1]}")
+
+    conn.commit()
+    conn.close()
+    os.system("sudo tpotinit restart > /dev/null 2>&1")
+
+if __name__ == "__main__":
+    deploy_mitigation()

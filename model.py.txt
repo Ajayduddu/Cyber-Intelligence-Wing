@@ -1,0 +1,29 @@
+import torch
+import torch.nn as nn
+from transformers import AutoModel
+
+class CyberThreatBiLSTM(nn.Module):
+    def __init__(self, scibert_model_name="allenai/scibert_scivocab_uncased", hidden_dim=256, num_classes=15):
+        super(CyberThreatBiLSTM, self).__init__()
+        self.scibert = AutoModel.from_pretrained(scibert_model_name)
+        
+        # Freeze SciBERT weights for efficiency during inference
+        for param in self.scibert.parameters():
+            param.requires_grad = False
+            
+        self.lstm = nn.LSTM(
+            input_size=768, 
+            hidden_size=hidden_dim,
+            num_layers=2,
+            bidirectional=True,
+            batch_first=True
+        )
+        # This classifier now outputs 15 distinct probabilities
+        self.classifier = nn.Linear(hidden_dim * 2, num_classes)
+
+    def forward(self, input_ids, attention_mask):
+        outputs = self.scibert(input_ids=input_ids, attention_mask=attention_mask)
+        sequence_output = outputs.last_hidden_state
+        lstm_out, _ = self.lstm(sequence_output)
+        final_state = lstm_out[:, -1, :]
+        return self.classifier(final_state)

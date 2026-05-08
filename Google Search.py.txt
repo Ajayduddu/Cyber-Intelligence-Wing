@@ -1,0 +1,17 @@
+import urllib.request
+import urllib.parse
+
+def check_threat_intel(query):
+    """
+    Simulates checking OSINT (Open Source Intelligence) by 
+    searching Google/AlienVault for known malicious signatures.
+    """
+    print(f"[*] Querying Global Threat Intel for: {query}")
+    # In a real environment, this queries an API. 
+    # For the project, we log the attempt.
+    with open("integrated_search_20260501.log", "a") as log:
+        log.write(f"OSINT Check: {query} - Flagged Malicious\n")
+    return True
+
+if __name__ == "__main__":
+    check_threat_intel("jndi:ldap://")

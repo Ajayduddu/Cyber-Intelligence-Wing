@@ -1,0 +1,12 @@
+import os
+
+def prep_demo():
+    print("--- Preparing RTAR Framework for Demo ---")
+    os.system("echo '' > /etc/suricata/rules/automated.rules")
+    os.system("sqlite3 cyber_intel.db 'DELETE FROM threat_logs;'")
+    print("[+] Database wiped. Memory is clean.")
+    print("[+] Suricata rules cleared.")
+    print("[*] Ready for recording. Start app.py now.")
+
+if __name__ == "__main__":
+    prep_demo()

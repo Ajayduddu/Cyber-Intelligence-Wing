@@ -1,0 +1,103 @@
+import sqlite3
+import torch
+from transformers import AutoTokenizer
+from flask import Flask, render_template, request, jsonify
+from datetime import datetime
+import mitre_scraper  
+from model import CyberThreatBiLSTM  
+
+app = Flask(__name__)
+DB_PATH = "cyber_intel.db"
+
+# ---------------------------------------------------------
+# Dynamic ML Loading (Real Inference Engine)
+# ---------------------------------------------------------
+print("[*] Loading SciBERT Tokenizer & BiLSTM Model weights...")
+tokenizer = AutoTokenizer.from_pretrained("allenai/scibert_scivocab_uncased")
+model = CyberThreatBiLSTM(num_classes=15) # Ensures 15 classes are loaded
+
+try:
+    # Loads the actual model you trained on your VM
+    model.load_state_dict(torch.load("bilstm_model_full.pth", map_location=torch.device('cpu')))
+    model.eval()
+    print("[+] Model loaded successfully. Inference engine online.")
+except FileNotFoundError:
+    print("[!] Warning: bilstm_model_full.pth not found. Run your training script first.")
+
+# Expanded ML Model Outputs (0-14) covering the Top 15 Network Edge Threats
+CLASS_MAPPING = {
+    0: "T1190",  # Exploit Public-Facing Application
+    1: "T1083",  # File and Directory Discovery
+    2: "T1110",  # Brute Force
+    3: "T1189",  # Drive-by Compromise
+    4: "T1595",  # Active Scanning
+    5: "T1059",  # Command and Scripting Interpreter
+    6: "T1046",  # Network Service Discovery
+    7: "T1133",  # External Remote Services
+    8: "T1078",  # Valid Accounts
+    9: "T1498",  # Network Denial of Service
+    10: "T1068", # Exploitation for Privilege Escalation
+    11: "T1203", # Exploitation for Client Execution
+    12: "T1021", # Remote Services
+    13: "T1566", # Phishing
+    14: "T1071"  # Application Layer Protocol
+}
+
+def predict_payload_dynamically(payload):
+    """
+    Passes the raw payload through your actual trained PyTorch neural network.
+    """
+    # 1. Tokenize the input dynamically
+    inputs = tokenizer(payload, return_tensors="pt", truncation=True, max_length=128, padding="max_length")
+    
+    # 2. Mathematical Inference
+    with torch.no_grad():
+        logits = model(inputs['input_ids'], inputs['attention_mask'])
+        prediction_idx = torch.argmax(logits, dim=1).item()
+    
+    # 3. Dynamic Mapping
+    predicted_tid = CLASS_MAPPING.get(prediction_idx, "T1110")
+    
+    # 4. Fetch the real official name from MITRE's live DB
+    real_attack_name = mitre_scraper.get_mitre_context(predicted_tid)
+    
+    # 5. Dynamic severity calculation based on model confidence
+    confidence = torch.nn.functional.softmax(logits, dim=1).max().item()
+    dynamic_severity = min(int(confidence * 10) + 2, 10) 
+    
+    return {
+        "tid": predicted_tid,
+        "attack_type": real_attack_name,
+        "severity": dynamic_severity
+    }
+
+# ---------------------------------------------------------
+# Flask Routing & Database Operations
+# ---------------------------------------------------------
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/analyze', methods=['POST'])
+def analyze():
+    payload = request.form.get('payload', '')
+    
+    # Run the REAL ML prediction
+    ml_results = predict_payload_dynamically(payload)
+    
+    # Archive in SQLite with processed = 0 for the Sentinel API
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO threat_logs (timestamp, tid, attack_type, severity, processed)
+        VALUES (?, ?, ?, ?, 0)
+    """, (datetime.now(), ml_results['tid'], ml_results['attack_type'], ml_results['severity']))
+    conn.commit()
+    conn.close()
+    
+    return jsonify(ml_results)
+
+if __name__ == '__main__':
+    # Initialize the local MITRE cache on startup
+    mitre_scraper.fetch_live_mitre_data()
+    app.run(host='0.0.0.0', port=5000, debug=True)

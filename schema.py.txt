@@ -1,0 +1,22 @@
+import sqlite3
+
+def init_db():
+    print("--- Initializing RTAR Memory Layer (cyber_intel.db) ---")
+    conn = sqlite3.connect("cyber_intel.db")
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS threat_logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp DATETIME,
+            tid TEXT,
+            attack_type TEXT,
+            severity INTEGER,
+            processed INTEGER
+        )
+    ''')
+    conn.commit()
+    conn.close()
+    print("[+] Database schema successfully built.")
+
+if __name__ == "__main__":
+    init_db()

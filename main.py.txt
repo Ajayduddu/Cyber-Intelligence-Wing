@@ -1,0 +1,17 @@
+import os
+import schema
+import sentinel_automation
+
+def system_check():
+    print("--- Cyber-Intelligence Wing: Main Orchestrator ---")
+    print("[*] Checking database integrity...")
+    schema.init_db()
+    print("[*] Verifying ML Environment variables...")
+    if not os.path.exists("bilstm_model_full.pth"):
+        print("[!] Warning: Pre-trained model not found. Run training scripts.")
+    print("[+] System check passed. RTAR Framework is active.")
+
+if __name__ == "__main__":
+    system_check()
+    # In a manual run, this triggers the defense API
+    sentinel_automation.deploy_mitigation()

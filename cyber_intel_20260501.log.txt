@@ -1,0 +1,13 @@
+2026-05-01 17:46:17,323 - INFO - WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.0.4:5000
+2026-05-01 17:46:17,323 - INFO - Press CTRL+C to quit
+2026-05-01 17:46:17,324 - INFO -  * Restarting with stat
+2026-05-01 17:46:17,507 - WARNING -  * Debugger is active!
+2026-05-01 17:46:17,508 - INFO -  * Debugger PIN: 129-477-064
+2026-05-01 17:46:20,687 - INFO - 184.151.230.147 - - [01/May/2026 17:46:20] "POST /api/search HTTP/1.1" 400 -
+2026-05-01 17:46:21,976 - INFO - 184.151.230.147 - - [01/May/2026 17:46:21] "POST /api/search HTTP/1.1" 400 -
+2026-05-01 17:46:23,025 - INFO - 184.151.230.147 - - [01/May/2026 17:46:23] "POST /api/search HTTP/1.1" 400 -
+2026-05-01 17:46:27,638 - INFO - 184.151.230.147 - - [01/May/2026 17:46:27] "GET / HTTP/1.1" 200 -
+2026-05-01 17:46:39,105 - INFO - 184.151.230.147 - - [01/May/2026 17:46:39] "POST /api/search HTTP/1.1" 400 -

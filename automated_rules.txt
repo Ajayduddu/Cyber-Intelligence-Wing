@@ -1,0 +1,6 @@
+alert ip any any -> any any (msg:"RTAR Auto-Block: SQL Injection Attempt (T1110)"; sid:2000004; rev:1;)
+alert ip any any -> any any (msg:"RTAR Auto-Block: SQL Injection Attempt (T1110)"; sid:2000005; rev:1;)
+alert ip any any -> any any (msg:"RTAR Auto-Block: SQL Injection Attempt (T1110)"; sid:2000006; rev:1;)
+alert ip any any -> any any (msg:"RTAR Auto-Block: Log4Shell RCE Attempt (T1110)"; sid:2000007; rev:1;)
+alert ip any any -> any any (msg:"RTAR Auto-Block: Directory Traversal - System File Access (T1110)"; sid:2000008; rev:1;)
+alert ip any any -> any any (msg:"RTAR Auto-Block: Director Stored XSS - Session Hijackingy Traversal - System File Access (T1110)"; sid:2000009; rev:1;)

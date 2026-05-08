@@ -1,0 +1,50 @@
+import requests
+import json
+import os
+
+# Official MITRE Cyber Threat Intelligence Repository
+MITRE_URL = "https://raw.githubusercontent.com/mitre/cti/master/enterprise-attack/enterprise-attack.json"
+LOCAL_CACHE = "mitre_cache.json"
+
+def fetch_live_mitre_data():
+    """Dynamically fetches the official MITRE Enterprise database."""
+    print("[*] Fetching live Enterprise ATT&CK matrix from official MITRE repo...")
+    try:
+        response = requests.get(MITRE_URL, timeout=10)
+        data = response.json()
+        
+        mitre_db = {}
+        # Parse the STIX JSON structure
+        for obj in data.get("objects", []):
+            if obj.get("type") == "attack-pattern":
+                ext_refs = obj.get("external_references", [])
+                for ref in ext_refs:
+                    if ref.get("source_name") == "mitre-attack":
+                        tid = ref.get("external_id")
+                        name = obj.get("name")
+                        mitre_db[tid] = name
+                        
+        print(f"[+] Successfully loaded {len(mitre_db)} live MITRE Techniques.")
+        
+        # Cache it locally so your dashboard doesn't lag on every request
+        with open(LOCAL_CACHE, "w") as f:
+            json.dump(mitre_db, f)
+            
+        return mitre_db
+    except Exception as e:
+        print(f"[!] Critical error connecting to MITRE: {e}")
+        return {}
+
+def get_mitre_context(tid):
+    """Retrieves context from the dynamic database."""
+    if not os.path.exists(LOCAL_CACHE):
+        fetch_live_mitre_data()
+        
+    with open(LOCAL_CACHE, "r") as f:
+        mitre_db = json.load(f)
+        
+    return mitre_db.get(tid, "Unknown or Deprecated Technique")
+
+if __name__ == "__main__":
+    fetch_live_mitre_data()
+    print("Test Live Lookup T1190:", get_mitre_context("T1190"))
